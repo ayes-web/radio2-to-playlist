@@ -6,9 +6,11 @@ def timeConvert(xd):
 	return str(sum([a*b for a,b in zip(ftr, map(int,timestr.split(':')))]))
 def choose(): 
 	while True:
-		ttt = input("PLS or M3U\nChoose format: ")
+		ttt = input("PLS or M3U (default M3U) \nChoose format: ")
 		if ttt == "PLS" or ttt == "M3U":
 			return ttt
+		elif ttt == "":
+			return "M3U"
 		else: 
 			continue
 
@@ -58,20 +60,19 @@ shows = [
 for show in shows:
     print(show[1] + " [No. " + show[0] + "]")
 print("")
-while True:
+while True: #Choose show
     vastus = input("Palun vali saade/Please choose show: ")
     for show in shows:
-        if vastus == show[0] or vastus == show[1]:
+        if vastus == show[0] or vastus == show[1]: #Could be number or show name
             vastus = [show[0], show[1]]
             break
     else:
         continue
     break
-    
+
 res = requests.get(service_link + vastus[0] + ".xml")
 res.raise_for_status()
-soup = bs4.BeautifulSoup(res.text, "lxml")
-
+soup = bs4.BeautifulSoup(res.text, "xml")
 
 place = input("Nothing for current folder.\nchoose folder: ")
 
@@ -84,7 +85,7 @@ author = soup.find_all("author")
 format = choose()
 
 i = 0
-if format == "M3U":
+if format == "M3U": #M3U file creation
 		f = open(place + title[0].text.strip() + ".M3U", "w")
 		f.write("#EXTM3U \n")
 
@@ -96,7 +97,7 @@ if format == "M3U":
 			f.write("#EXTINF:" + str(i) + ", " + author[0].text.strip()+ " - " + title[i].text.strip() + "\n")
 			f.write(musicURL[i].get("url") + "\n \n")
 			i += 1
-elif format == "PLS":
+elif format == "PLS": #PLS file creation
 		f = open(place + title[0].text.strip() + ".PLS", "w")
 		f.write("[playlist] \nNumberOfEntries=" + str(len(musicURL)) + "\n \n")
 		while i < len(musicURL):	
