@@ -1,4 +1,4 @@
-import requests, bs4
+import requests, bs4, lxml
 
 def timeConvert(xd):
 	timestr = xd.text.strip()
@@ -67,12 +67,11 @@ while True:
     else:
         continue
     break
-try: 
-	res = requests.get(service_link + vastus[0] + ".xml")
-	res.raise_for_status()
-	soup = bs4.BeautifulSoup(res.text, "xml")
-except:
-	print("I either cant parse xml or i have no network!")
+    
+res = requests.get(service_link + vastus[0] + ".xml")
+res.raise_for_status()
+soup = bs4.BeautifulSoup(res.text, "lxml")
+
 
 place = input("Nothing for current folder.\nchoose folder: ")
 
